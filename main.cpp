@@ -1,5 +1,5 @@
-#include<GLUT/glut.h>
-#include<OpenGL/gl.h>
+#include<windows.h>
+#include<GL/glut.h>
 #define PI   3.141516
 #include<math.h>
 float aspect = 1920.0f / 1080.0f;
@@ -214,13 +214,165 @@ void drawWatchTower() {
     glEnd();
 }
 
+// Rittik -----------------------------------------------------
+
+int mode = 0; // 0 = Day, 1 = Monsoon
+float rainY[200];
+void keyboard(unsigned char key, int x, int y) {
+
+    switch(key) {
+        case '1':
+            mode = 0; // Day
+            break;
+
+        case '2':
+            mode = 1; // Monsoon
+            break;
+    }
+
+    glutPostRedisplay();
+}
+
+void drawCircle(float p1, float q1, float r1) {
+    int i;
+    int n = 40;
+    float tp = 2 * PI;
+
+    glBegin(GL_TRIANGLE_FAN);
+    glVertex2f(p1, q1);
+
+    for(i=0;i<=n;i++) {
+        glVertex2f(p1 + r1*cos(i*tp/n), q1 + r1*sin(i*tp/n));
+    }
+
+    glEnd();
+}
+void drawTriangle(float x1,float y1,float x2,float y2,float x3,float y3){
+    glBegin(GL_TRIANGLES);
+    glVertex2f(x1,y1);
+    glVertex2f(x2,y2);
+    glVertex2f(x3,y3);
+    glEnd();
+}
+void drawTree(float x, float y, float s) {
+
+//left branch end
+glColor3ub(110, 130, 40);//left shadow
+drawCircle(x - 0.10*s, y + 0.35*s, 0.13*s);
+  // leaves
+glColor3ub(130, 150, 40);
+
+// main trunk
+drawCircle(x - 0.01*s, y + 0.56*s, 0.13*s);
+
+drawCircle(x + 0.10*s, y + 0.49*s, 0.10*s);
+
+drawCircle(x - 0.08*s, y + 0.38*s, 0.13*s);
+
+// right branch
+drawCircle(x + 0.08*s + 0.02*s, y + 0.35*s, 0.13*s);
+
+// main trunk
+    glColor3ub(139,69,19);
+    drawTriangle(
+        x, y + 0.5*s,
+        x - 0.02*s, y,
+        x + 0.02*s, y
+    );
+
+    float midY = y + 0.2*s;
+// right branch
+    drawTriangle(
+    x, midY + 0.03*s,
+    x, midY - 0.03*s,
+    x + 0.08*s, y + 0.35*s
+);
+
+// left branch
+    drawTriangle(
+    x, midY + 0.03*s,
+    x, midY - 0.03*s,
+    x - 0.08*s, y + 0.33*s
+);
+
+}
+
+void drawScene() {
+
+    // curved road
+    glColor3ub( 	214, 138, 89);
+    glBegin(GL_POLYGON);
+
+    glVertex2f(0.30, -1.0);
+    glVertex2f(0.10, -1.0);
+    glVertex2f(0.7, -0.1);
+    glVertex2f(0.9, -0.1);
+   /*
+    glVertex2f(0.33, -0.9);
+    glVertex2f(0.36, -0.8);
+    glVertex2f(0.40, -0.7);
+    glVertex2f(0.44, -0.6);
+    glVertex2f(0.48, -0.5);
+    glVertex2f(0.52, -0.4);
+    glVertex2f(0.56, -0.3);
+    glVertex2f(0.58, -0.25);
+    glVertex2f(0.60, -0.2);
+
+    glVertex2f(0.70, -0.2);
+    glVertex2f(0.66, -0.25);
+    glVertex2f(0.62, -0.4);
+    glVertex2f(0.60, -0.5);
+    glVertex2f(0.57, -0.6);
+    glVertex2f(0.53, -0.7);
+    glVertex2f(0.48, -0.8);
+    glVertex2f(0.43, -0.9);
+    glVertex2f(0.38, -1.0);
+*/
+    glEnd();
+
+    // trees
+    drawTree(0.11,-0.5,0.75);
+    drawTree(0.45,-0.2,0.5);
+    drawTree(0.95,-0.9,0.9);
+    drawTree(-0.97,-0.75,1.25);
+    drawTree(-0.5,-0.35,0.45);
+    drawTree(-0.5,0.19,0.15);
+    drawTree(-0.4,0.14,0.15);
+    drawTree(-0.15,0.19,0.11);
+    drawTree(0.1,0.12,0.15);
+    drawTree(0.4,0.4,0.11);
+}
+
+void init() {
+    glClearColor(0.0, 0.0, 0.0, 1.0); // background color (black)
+
+    glMatrixMode(GL_PROJECTION);
+    gluOrtho2D(-1, 1, -1, 1); // coordinate system
+    for(int i=0;i<200;i++){
+    rainY[i] = (rand()%200)/100.0 - 1; // -1 to 1
+}
+}
+
+
+void update(int value) {
+
+    for(int i=0;i<200;i++){
+        rainY[i] -= 0.02;
+
+        if(rainY[i] < -1)
+            rainY[i] = 1;
+    }
+
+    glutPostRedisplay();
+    glutTimerFunc(16, update, 0);
+}
+
 void display() {
     glClear(GL_COLOR_BUFFER_BIT);
 
 
     /* Sun - Rashed */
     circleFuncSun(0.88f, 0.88f, 0.1f, 255, 255, 0);
-
 
 
     /* Clouds - Rashed */
@@ -348,6 +500,34 @@ void display() {
 
     madeByNijhum();
 
+    switch(mode) {
+
+        case 0: // Day
+            glClearColor(0.6, 0.9, 1.0, 1.0);
+
+            glColor3f(0.6, 0.9, 0.6); // bright grass
+            drawScene();
+            break;
+
+        case 1: // Monsoon
+            glClearColor(0.4, 0.5, 0.6, 1.0);
+
+            glColor3ub(80,120,40); // dark grass
+            drawScene();
+
+            // rain
+            glColor3ub(180,180,255);
+            glBegin(GL_LINES);
+            for(int i=0;i<200;i++){
+                float x = -1 + (i * 0.01);
+                glVertex2f(x, rainY[i]);
+                glVertex2f(x+0.02, rainY[i]-0.1);
+            }
+            glEnd();
+
+            break;
+    }
+
     glFlush();
 }
 
@@ -358,7 +538,14 @@ int main(int argc, char** argv) {
     glutInitWindowSize(1920, 1080);
     glutCreateWindow("Dynamic Camping Scenario");
     glClearColor(0.0, 0.0, 1.0, 1.0); // blue background
+
+    init(); // call init
+
     glutDisplayFunc(display);
+
+    glutKeyboardFunc(keyboard);
+    glutTimerFunc(0, update, 0);
+
     glutMainLoop();
     return 0;
 }
