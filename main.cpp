@@ -121,12 +121,33 @@ void madeByNijhum() {
     glVertex2f(-0.225f, -0.57f);
     glEnd();
 
+    // log shade 1 ---------------------------
+    glBegin(GL_POLYGON);
+    glColor3ub(150, 75, 0);
+    glVertex2f(-0.4f, -0.60f);
+    glVertex2f(-0.395f, -0.68f);
+    glVertex2f(-0.394f, -0.65f);
+    glVertex2f(-0.397f, -0.68f);
+    glVertex2f(-0.397f, -0.60f);
+    glEnd();
+
+    // log shade 2 ---------------------------
+    glBegin(GL_POLYGON);
+    glColor3ub(150, 75, 0);
+    glVertex2f(-0.225f, -0.60f);
+    glVertex2f(-0.221f, -0.65f);
+    glVertex2f(-0.224f,  -0.64f);
+    glVertex2f(-0.223f, -0.65f);
+    glVertex2f(-0.222f, -0.57f);
+    glEnd();
+
     glLineWidth(8.0f);
     glColor4ub(101, 67, 33, 255);
     glBegin(GL_LINES);
     glVertex2f(-0.35f, -0.60f); // Start
     glVertex2f(-0.33f, -0.57f); // End
     glEnd();
+
 }
 
 // Function for Watch Tower - Wakil
